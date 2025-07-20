@@ -24,8 +24,8 @@ Thumbs.db
 # Ignore build files
 Client/dist/
 Client/build/
-backend/dist/
-backend/build/
+Backend/dist/
+Backend/build/
 
 # Ignore IDE/editor folders
 .vscode/
