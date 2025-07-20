@@ -1,0 +1,44 @@
+# Ignore node modules in both frontend and backend
+Client/node_modules/
+Client/.next/
+Backend/node_modules/
+
+# Ignore environment variables
+Client/.env
+Backend/.env
+
+# Ignore logs
+logs
+*.log
+
+# === LOG FILES ===
+*.log
+logs/
+npm-debug.log*
+
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore build files
+Client/dist/
+Client/build/
+backend/dist/
+backend/build/
+
+# Ignore IDE/editor folders
+.vscode/
+.idea/
+
+# Ignore coverage reports
+coverage/
+
+
+# Ignore Mac/Windows system files
+.DS_Store
+Thumbs.db
+
+# Ignore uploads/temp folders globally
+uploads/
+tmp/
