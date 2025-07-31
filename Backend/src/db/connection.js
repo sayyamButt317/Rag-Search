@@ -1,20 +1,23 @@
-import mongoose from "mongoose";
+import { QdrantClient } from "@qdrant/js-client-rest";
+
 import dotenv from "dotenv";
-import chalk from 'chalk';
+import chalk from "chalk";
 
 dotenv.config();
+let qdrantClient;
+
 const connectionDB = async () => {
   try {
-    const connectionInstance = await mongoose.connect(
-      `${process.env.MONGODB_URI}`
-    );
-    console.log(chalk.bgGreenBright(` Connected to database! ✅ `),
-        `Database: ${connectionInstance.connection.name}`,
-    );
+    qdrantClient = new QdrantClient({
+      url: process.env.QDRANT_URL,
+      apiKey: process.env.QDRANT_API_KEY,
+    });
+    console.log(chalk.green("✅ Qdrant connected successfully"));
+    const result = await qdrantClient.getCollections({});
+    console.log("📦 Collections:", result.collections);
   } catch (error) {
-    console.log(chalk.bgRed("MongoDB connection failed ❌", error));
+    console.log(chalk.bgRed("❌ Qdrant connection failed"), error);
     process.exit(1);
   }
 };
-
-export { connectionDB };
+export { connectionDB, qdrantClient };
