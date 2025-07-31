@@ -3,7 +3,8 @@ import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu";
 import ChatComponent from '@/components/chat';
 import { toast } from "sonner";
 import { useState } from "react";
-import { Loader2 as Loader2Icon } from "lucide-react";
+import { Loader2 as Loader2Icon, UploadCloud } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const [loading, setloading] = useState(false);
@@ -11,7 +12,7 @@ export default function Home() {
   const uploadfile = () => {
     const el = document.createElement('input');
     el.setAttribute('type', 'file');
-    el.setAttribute('accept', 'application/pdf')
+    el.setAttribute('accept', 'application/pdf,')
     el.addEventListener('change', async (ev) => {
       if (el.files && el.files.length > 0) {
         const file = el.files.item(0)
@@ -49,10 +50,14 @@ export default function Home() {
         <ContextMenuTrigger
           onClick={uploadfile}
           className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed text-sm cursor-pointer">
-          {loading ? <Loader2Icon className="animate-spin color-blue" /> : "Upload"}
+          {loading ? <Loader2Icon className="animate-spin color-blue" /> : "Upload"} 
+        
+          
         </ContextMenuTrigger>
       </ContextMenu>
       <ChatComponent />
     </div>
   );
 }
+
+
