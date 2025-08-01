@@ -42,3 +42,5 @@ Thumbs.db
 # Ignore uploads/temp folders globally
 uploads/
 tmp/
+# Ignore package lock files
+package-lock.json

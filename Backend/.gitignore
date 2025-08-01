@@ -28,3 +28,6 @@ Backend/build/
 
 # Ignore coverage reports
 coverage/
+
+package-lock.json
+yarn.lock
