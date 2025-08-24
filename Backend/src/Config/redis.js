@@ -18,7 +18,5 @@ const connectRedis = new Redis({
   retryDelayOnFailover: 100,
   maxRetriesPerRequest: 3,
 });
-connectRedis.on("error", (err) => {
-  console.error("❌ Redis connection error:", err);
-});
+
 export default connectRedis;

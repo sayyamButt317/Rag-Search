@@ -1,19 +1,18 @@
-'use client'
-import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu";
-import ChatComponent from '@/components/chat';
-import { toast } from "sonner";
+"use client"
+import ChatComponent from "@/app/component/chat";
+import Image from "next/image";
 import { useState } from "react";
-import { Loader2 as Loader2Icon, UploadCloud } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
-export default function Home() {
+const Chat = () => {
+
   const [loading, setloading] = useState(false);
 
   const uploadfile = () => {
     const el = document.createElement('input');
     el.setAttribute('type', 'file');
     el.setAttribute('accept', 'application/pdf,')
-    el.addEventListener('change', async (ev) => {
+    el.addEventListener('change', async () => {
       if (el.files && el.files.length > 0) {
         const file = el.files.item(0)
         if (file) {
@@ -44,20 +43,94 @@ export default function Home() {
     el.click();
   }
 
+  const uploadfolder = () => {
+    const el = document.createElement('input');
+    el.setAttribute('type', 'file');
+    el.setAttribute('accept', 'application/pdf,')
+    el.setAttribute('multiple', 'true');
+    el.setAttribute('webkitdirectory', 'true');
+    el.setAttribute('directory', 'true');
+    el.addEventListener('change', async () => {
+      if (el.files && el.files.length > 0) {
+        const file = el.files.item(0)
+        if (file) {
+          const formData = new FormData();
+          formData.append('folder', file);
+          try {
+            setloading(true)
+            const response = await fetch("http://localhost:8000/upload/folder", {
+              method: 'POST',
+              body: formData
+            });
+            if (!response.ok) {
+              throw new Error("❌ Upload failed");
+            }
+
+            toast.success(" Folder uploaded successfully!");
+
+          } catch (err) {
+            toast.error("❌ Upload failed!");
+            console.error(err);
+          } finally {
+            setloading(false);
+          }
+        }
+      }
+    });
+    el.click();
+  }
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <ContextMenu>
-        <ContextMenuTrigger
-          onClick={uploadfile}
-          className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed text-sm cursor-pointer">
-          {loading ? <Loader2Icon className="animate-spin color-blue" /> : "Upload"} 
-        
-          
-        </ContextMenuTrigger>
-      </ContextMenu>
-      <ChatComponent />
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+      <div className="grid grid-cols-12">
+        <aside className="hidden md:block md:col-span-3 lg:col-span-3 xl:col-span-3 h-screen sticky top-0 border-r border-slate-200 bg-white/70 backdrop-blur">
+          <div className="flex items-center gap-3 px-6 py-6">
+            <div className="relative h-10 w-10 rounded-xl ring-1 ring-slate-200 overflow-hidden bg-gradient-to-br from-emerald-400 to-teal-500">
+              <Image src="/assets/doc.png" alt="Company logo" fill className="object-contain p-1" sizes="40px" />
+            </div>
+            <div>
+              <p className="text-base font-semibold">Your Company</p>
+              <p className="text-sm text-slate-500">AI Knowledge Chat</p>
+            </div>
+          </div>
+          <div className="px-6">
+            <div className="mt-2 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+              <p className="text-sm text-slate-600">Chat with your docs, ask questions, and get instant answers.</p>
+            </div>
+          </div>
+          <div className="px-6 gap-2 flex flex-col mt-4">
+            <button
+              className="w-full rounded-xl bg-emerald-500 px-4 py-2 text-white hover:bg-emerald-600"
+              onClick={uploadfile}
+              disabled={loading}
+            >
+              {loading ? "Uploading..." : "Upload File"}
+            </button>
+            <button
+              className="w-full rounded-xl bg-emerald-500 px-4 py-2 text-white hover:bg-emerald-600"
+              onClick={uploadfolder}
+              disabled={loading}
+            >
+              {loading ? "Uploading..." : "Upload Folder"}
+            </button>
+          </div>
+        </aside>
+        <main className="col-span-12 md:col-span-9 min-h-screen">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-10 py-8 md:py-12">
+            <div className="mb-6">
+              <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Ask anything about your files</h1>
+              <p className="mt-1 text-slate-600">Upload a file and start chatting. We’ll highlight sources and keep context as you go.</p>
+            </div>
+            <div className="relative">
+              <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-br from-emerald-400/40 via-teal-400/40 to-sky-400/40 blur"></div>
+              <div className="relative rounded-2xl border border-slate-200 bg-white/90 backdrop-blur p-4 sm:p-6 shadow-xl">
+                <ChatComponent />
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   );
-}
+};
 
-
+export default Chat;
