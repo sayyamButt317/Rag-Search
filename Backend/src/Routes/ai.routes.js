@@ -16,5 +16,4 @@ router.post("/upload/folder", folderupload.array("folder", 100), UploadFolder);
 router.get("/chat", CreateVectorEmbedding,DirectoryEmbedding);
 router.post("/video-prompt", VideoGenerator);
 router.post("/text", TextToSpeech);
-
 export default router;

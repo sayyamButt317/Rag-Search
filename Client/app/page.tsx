@@ -88,8 +88,8 @@ const Chat = () => {
               <Image src="/assets/doc.png" alt="Company logo" fill className="object-contain p-1" sizes="40px" />
             </div>
             <div>
-              <p className="text-base font-semibold">Your Company</p>
-              <p className="text-sm text-slate-500">AI Knowledge Chat</p>
+              <p className="text-base font-semibold">Your Knowledge Base</p>
+              <p className="text-sm text-slate-500">AI Knowledge Base Chat Bot</p>
             </div>
           </div>
           <div className="px-6">
@@ -117,8 +117,8 @@ const Chat = () => {
         <main className="col-span-12 md:col-span-9 min-h-screen">
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-10 py-8 md:py-12">
             <div className="mb-6">
-              <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Ask anything about your files</h1>
-              <p className="mt-1 text-slate-600">Upload a file and start chatting. We’ll highlight sources and keep context as you go.</p>
+              <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Ask anything about your files or folder</h1>
+              <p className="mt-1 text-slate-600">Upload a file or folder and start chatting. We’ll highlight sources and keep context as you go.</p>
             </div>
             <div className="relative">
               <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-br from-emerald-400/40 via-teal-400/40 to-sky-400/40 blur"></div>
