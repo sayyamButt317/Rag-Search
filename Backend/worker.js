@@ -22,8 +22,6 @@ const worker = new Worker(
       const { folderPath, path, isFolder,fileName } = job.data;
       let docs = [];
       if (isFolder) {
-          console.log(`📂 Loading folder: ${folderPath}`);
-          console.log(`📂 Loading folder: ${fileName}`);
           docs = await loadFolder(folderPath);
       } else {
         console.log(`📄 Loading single file: ${path}`);

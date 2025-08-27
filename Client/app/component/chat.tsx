@@ -25,6 +25,16 @@ export default function ChatComponent() {
   const [message, setMessage] = useState<string>("");
   const [messageHistory, setMessageHistory] = useState<IMessage[]>([]);
   const [isThinking, setIsThinking] = useState<boolean>(false);
+  const [expandedSources, setExpandedSources] = useState<Set<number>>(new Set());
+
+  const toggleSources = (index: number) => {
+    setExpandedSources((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
 
   const handlechatmessage = async () => {
     if (!message.trim()) return;
@@ -77,15 +87,52 @@ export default function ChatComponent() {
                   : "bg-gray-100 text-slate-900"
               }`}
             >
-              {msg.content}
+              {(msg.content || "").replace(/\s*Reference Text:[\s\S]*$/,'').trim()}
               {msg.documents && msg.documents.length > 0 && (
                 <div className="mt-1 text-sm text-slate-500">
-                  <p className="text-sm font-semibold bg-emerald-500 text-white px-2 py-1 rounded-md w-fit">Source:</p>
-                  <ul className="list-disc pl-5">
-                    <li>{msg.documents[0].metadata?.source || "Unknown"}</li>
-                    
-                    <li><span>Page Number: </span>{msg.documents[0].metadata?.loc?.pageNumber || "Unknown"}</li>
-                  </ul>
+                  <button
+                    className="text-emerald-600 hover:text-emerald-700 font-medium"
+                    onClick={() => toggleSources(index)}
+                  >
+                    {expandedSources.has(index) ? "Hide source" : "View source"}
+                  </button>
+                  {expandedSources.has(index) && (
+                    <div className="mt-1">
+                      <p className="text-sm font-semibold bg-emerald-500 text-white px-2 py-1 rounded-md w-fit">Extract Information Source:</p>
+                      <ul className="mt-1 space-y-2 pl-0">
+                        {msg.content && msg.content.includes("Reference Text:") && (
+                          <li className="list-none rounded-md border border-slate-200 bg-white/60 p-2">
+                            <div className="text-slate-700 text-sm">
+                              <span className="font-medium">Reference Text:</span>{' '}
+                              {(msg.content.split('Reference Text:').pop() || "").trim()}
+                            </div>
+                          </li>
+                        )}
+                        {msg.documents.slice(0, 3).map((doc, i) => {
+                          const src = doc.metadata?.source || "Unknown";
+                          const fileOnly = src.split(/[/\\\\]/).pop() || src;
+                          const pageNum = doc.metadata?.loc?.pageNumber;
+                          const excerpt = (doc.pageContent || "").slice(0, 300);
+                          return (
+                            <li key={i} className="list-none rounded-md border border-slate-200 bg-white/60 p-2">
+                              <div className="text-slate-700">
+                                <span className="font-medium">{fileOnly}</span>
+                                {typeof pageNum === "number" && (
+                                  <span className="text-slate-500"> · p.{pageNum}</span>
+                                )}
+                              </div>
+                              {excerpt && (
+                                <div className="text-slate-600 text-xs mt-1">
+                                  {excerpt}
+                                  {doc.pageContent && doc.pageContent.length > 300 ? "…" : ""}
+                                </div>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

@@ -115,13 +115,14 @@ const Chat = () => {
               </p>
             </div>
           </div>
-          <div className="px-6 gap-2 flex flex-col mt-4">
+          <div className="px-6 gap-2 flex flex-row mt-4">
             <button
               className="w-full rounded-xl bg-emerald-500 px-4 py-2 text-white hover:bg-emerald-600"
               onClick={uploadfile}
               disabled={loading}
             >
-              {loading ? "Uploading..." : "Upload File"}
+               {loading ? "Uploading..." : "Upload File"}
+            
             </button>
             <button
               className="w-full rounded-xl bg-emerald-500 px-4 py-2 text-white hover:bg-emerald-600"
@@ -144,7 +145,7 @@ const Chat = () => {
               </p>
             </div>
             <div className="relative">
-              <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-br from-emerald-400/40 via-teal-400/40 to-sky-400/40 blur"></div>
+              <div className="absolute -inset-0.5 rounded-2xl "></div>
               <div className="relative rounded-2xl border border-slate-200 bg-white/90 backdrop-blur p-4 sm:p-6 shadow-xl">
                 <ChatComponent />
               </div>
