@@ -22,6 +22,7 @@ export default async function CreateVectorEmbedding(req, res, next) {
         collectionName: "pdf-docs",
       }
     );
+    
 
     // Use retriever
     const retriever = vectorStore.asRetriever({ k: 2 });

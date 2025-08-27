@@ -7,6 +7,7 @@ import { JSONLoader } from "langchain/document_loaders/fs/json";
 import { JSONLinesLoader } from "langchain/document_loaders/fs/json";
 import { TextLoader } from "langchain/document_loaders/fs/text";
 import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";
+import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
 import client from "../../../Config/ai.config.js";
 import AI_PROMPT from "../../../Utils/Prompt.js";
 
@@ -24,18 +25,20 @@ export default async function DirectoryEmbedding(req, res) {
 
     console.log("🔍 Connecting to Qdrant collection: pdf-docs");
 
-    // 1️⃣ Load docs from directory
+    //  Load ALL files from directory (auto-handles each extension)
     const loader = new DirectoryLoader(folderPath, {
       ".pdf": (path) => new PDFLoader(path, { parsedItemSeparator: "" }),
       ".json": (path) => new JSONLoader(path, "/texts"),
       ".jsonl": (path) => new JSONLinesLoader(path, "/html"),
       ".txt": (path) => new TextLoader(path),
       ".csv": (path) => new CSVLoader(path, "text"),
+      ".docx": (path) => new DocxLoader(path, "text"),
     });
+
     const docs = await loader.load();
     console.log(`📄 Loaded ${docs.length} docs from: ${folderPath}`);
 
-    // 2️⃣ Split documents
+    // Split into smaller chunks
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 1000,
       chunkOverlap: 200,
@@ -43,10 +46,14 @@ export default async function DirectoryEmbedding(req, res) {
     const splitDocs = await textSplitter.splitDocuments(docs);
     console.log(`✂️ Split into ${splitDocs.length} chunks`);
 
-    // 3️⃣ Store in Qdrant
+    // Store embeddings in Qdrant
     const vectorStore = await QdrantVectorStore.fromDocuments(
       splitDocs,
       embeddings,
+      {
+        vectors: { size: 768, distance: "Cosine" },
+        optimizers_config: { default_segment_number: 16, max_segment_size: 5000000 },
+      },
       {
         url: process.env.QDRANT_URL,
         apiKey: process.env.QDRANT_API_KEY,
@@ -54,12 +61,12 @@ export default async function DirectoryEmbedding(req, res) {
       }
     );
 
-    // 4️⃣ Query relevant docs
+    // Retrieve top results for query
     const retriever = vectorStore.asRetriever({ k: 2 });
     const result = await retriever.invoke(userQuery);
     console.log("✅ Retrieved docs for query");
 
-    // 5️⃣ Call GPT with context
+    // Pass retrieved docs to GPT
     const SYSTEM_PROMPT = AI_PROMPT + JSON.stringify(result);
     const chatResult = await client.chat.completions.create({
       model: "gpt-4.1",

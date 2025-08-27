@@ -2,6 +2,13 @@ import { Worker } from "bullmq";
 import { QdrantVectorStore } from "@langchain/qdrant";
 import { CharacterTextSplitter } from "@langchain/textsplitters";
 import embeddings from "./src/Config/embedding.config.js";
+import { DirectoryLoader } from "langchain/document_loaders/fs/directory";
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+import { JSONLoader } from "langchain/document_loaders/fs/json";
+import { JSONLinesLoader } from "langchain/document_loaders/fs/json";
+import { TextLoader } from "langchain/document_loaders/fs/text";
+import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";
+import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
 import loadFile from "./src/services/loadfile.service.js";
 import loadFolder from "./src/services/loadfolder.service.js";
 import dotenv from "dotenv";
@@ -12,33 +19,19 @@ const worker = new Worker(
   async (job) => {
     try {
       console.log(`🚀 Processing job: ${job.id}`);
-      const { folderName, folderPath, path, isFolder } = job.data;
-      console.log("job.data", job.data);
-
+      const { folderPath, path, isFolder,fileName } = job.data;
       let docs = [];
       if (isFolder) {
-        console.log(`📄 Folder name: ${folderName}`);
-        docs = await loadFolder(folderPath, folderName);
+          console.log(`📂 Loading folder: ${folderPath}`);
+          console.log(`📂 Loading folder: ${fileName}`);
+          docs = await loadFolder(folderPath);
       } else {
-        console.log(`📄 File path: ${path}`);
+        console.log(`📄 Loading single file: ${path}`);
         docs = await loadFile(path);
       }
-
-      console.log(`📄 Loaded ${docs.length} pages`);
-
       // Check if collection exists
       const vectorStore = await QdrantVectorStore.fromExistingCollection(
         embeddings,
-        {
-          vectors: {
-            size: 768,
-            distance: "Cosine",
-          },
-          optimizers_config: {
-            default_segment_number: 16,
-            max_segment_size: 5000000,
-          },
-        },
         {
           url: process.env.QDRANT_URL,
           apiKey: process.env.QDRANT_API_KEY,

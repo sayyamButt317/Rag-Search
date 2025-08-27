@@ -1,7 +1,7 @@
 import BullQueue from "../../../Config/BullQueue.js";
 
 
-export async function UploadPDF(req,res) {
+export async function UploadFile(req,res) {
   try {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
