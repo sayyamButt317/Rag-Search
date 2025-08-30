@@ -46,8 +46,11 @@ const worker = new Worker(
 
       await vectorStore.addDocuments(splitDocs);
       console.log(`✅ Vectorization complete`);
+      return { success: true, message: "Vectorization complete" };
+      
     } catch (error) {
       console.error(`❌ Job ${job.id} failed:`, error);
+      return { success: false, message: "Vectorization failed" };
       throw error;
     }
   },

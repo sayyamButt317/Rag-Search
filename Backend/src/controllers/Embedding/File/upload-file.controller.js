@@ -7,14 +7,14 @@ export async function UploadFile(req,res) {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    await BullQueue.add("file-ready", {
+    const job = await BullQueue.add("file-ready", {
       filename: req.file.originalname,
       destination: req.file.destination,
       path: req.file.path,
       isFolder: false,
     });
 
-    return res.json({ message: "File uploaded successfully" });
+    return res.json({ message: "File uploaded successfully", jobId: job.id });
   } catch (error) {
     console.error("Upload error:", error);
     return res.status(500).json({ error: "Internal Server Error" });
