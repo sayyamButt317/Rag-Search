@@ -39,7 +39,7 @@ export default function GenerateVideo() {
       }
     } catch (error) {
       console.error("Error in video generation:", error);
-      setApiResponse({ error: error.message });
+      // setApiResponse((prevState: any) => ({ error: error.message }));
     }
     setloading(false);
   };
